@@ -4,7 +4,7 @@ This is a PHP script that will check for spelling errors in a text file, given a
 It can be executed via the command line. (shown below)
 
 ```bash
-php spellchecker.php dictionary.txt badSpelling.txt
+php spellcheck.php dictionary.txt badSpelling.txt
 ```
 Any words that are not found in the dictionary, will be output along with their line and column numbers.
 ```bash
