@@ -7,10 +7,11 @@ function customErrorHandler($errno, $errstr, $errfile, $errline) {
 set_error_handler( 'customErrorHandler' );
 
 echo "\n";
+
 $argv[1] = isset( $argv[1] ) ? $argv[1] : null;
 $argv[2] = isset( $argv[2] ) ? $argv[2] : null;
-$spellChecker = new SpellChecker( $argv[1], $argv[2] );
 
+$spellChecker = new SpellChecker( $argv[1], $argv[2] );
 $spellChecker->check();
 
 echo "\n\n";
@@ -44,7 +45,7 @@ class SpellChecker {
 	function check() {
 		for( $i = 0; $i < count( $this->fileToCheck ); $i++ ) {
 			$words = array(); 
-			preg_match_all( "/[a-z]+/", strtolower( $this->fileToCheck[$i] ), $words ); 
+			preg_match_all( "/[a-zA-Z\']+/", $this->fileToCheck[$i], $words ); 
 			$this->checkLine( $i+1, $words[0], $this->fileToCheck[$i] );
 		}
 
@@ -59,14 +60,20 @@ class SpellChecker {
 	function checkLine( $lineNum, $lineWords, $fullLine ) {
 		$misspelled = [];
 		foreach( $lineWords as $word ) {
-			if( !isset( $this->dictionary[$word] ) ) {
+
+			if( !isset( $this->dictionary[strtolower( $word )] ) ) {
 				$misspelled[] = $word;
 			}
 		}
 
 		if( count( $misspelled ) ) {
+			$column = 0;
+			$match = array();
 			foreach( $misspelled as $badWord ) {
-				$this->allMisspelledWords[] = $lineNum . ':' . strpos( $fullLine, $badWord ) . "\t" . $badWord;
+				preg_match( '/\b' . $badWord . '\b/', substr( $fullLine, $column ), $match, PREG_OFFSET_CAPTURE );
+				$column += $match[0][1];
+				$this->allMisspelledWords[] = $lineNum . ':' . ( $column + 1 ) . "\t" . $badWord;
+				$column++;
 			}
 		}
 	}
