@@ -1,21 +1,25 @@
 <?php
 
+//Creating and setting a custom error handler just to simplify error messaging for PHP script
 function customErrorHandler($errno, $errstr, $errfile, $errline) {
-	echo "\tERROR: " . $errstr . ' :'.$errline . "\n\n";
+	echo "\tERROR: " . $errstr . ' :' . "\n\n";
 	die;
 }
 set_error_handler( 'customErrorHandler' );
 
+//Main script
 echo "\n";
-
+//Make sure command line arguments are set, even if set to null
 $argv[1] = isset( $argv[1] ) ? $argv[1] : null;
 $argv[2] = isset( $argv[2] ) ? $argv[2] : null;
 
+//Core logic happens inside SpellChecker class
 $spellChecker = new SpellChecker( $argv[1], $argv[2] );
 $spellChecker->check();
-
 echo "\n\n";
+//Script execution ends here
 
+///////////////////////////////////////////////////////////////////////////////
 class SpellChecker {
 
 	private $dictionary;
